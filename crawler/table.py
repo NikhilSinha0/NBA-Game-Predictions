@@ -1,18 +1,17 @@
 import os
 
 class game_table:
-    home = ''
-    away = ''
+    def __init__(self):
+        self.home = ''
+        self.away = ''
 
-    month = ''
-    day = ''
-    year = ''
+        self.date = ''
 
-    home_scores = {}
-    away_scores = {}
+        self.home_scores = {}
+        self.away_scores = {}
 
-    add_to_home = False
-    remove_MP = True
+        self.add_to_home = False
+        self.remove_MP = True
 
     def add_name(self, name):
         if(self.away):
@@ -22,7 +21,7 @@ class game_table:
 
     def add_to_home_scores(self, row):
         if(self.home_scores.get(row[0])):
-            if(row[1]=='Did Not Play'):
+            if(len(row)==2):
                 return
             if(self.remove_MP):
                 self.home_scores.get(row[0]).extend(row[2:])    
@@ -33,7 +32,7 @@ class game_table:
 
     def add_to_away_scores(self, row):
         if(self.away_scores.get(row[0])):
-            if(row[1]=='Did Not Play'):
+            if(len(row)==2):
                 return
             if(self.remove_MP):
                 self.away_scores.get(row[0]).extend(row[2:])    
@@ -68,7 +67,7 @@ class game_table:
         print(self.home_scores)
 
     def table_to_csv(self):
-        result = ''
+        result = 'Date: '+self.date+'\n'
         result += 'Away: ' + self.away + '\n'
         for name, stats in self.away_scores.items():
             result += name + ',' + ','.join(stats)
@@ -78,17 +77,15 @@ class game_table:
             result += name + ',' + ','.join(stats)
             result += '\n'
         path = './game_scores'
-        fname = self.away.split(' ')[1]+'At'+self.home.split(' ')[1]+str(self.month)+str(self.day)+str(self.year)
+        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+("".join(self.date.split("/")))
         if not os.path.exists(path):
             os.makedirs(path)
+            print('Created path ' + path)
         f = open(os.path.join(path, fname+".txt"),"w+")
         f.write(result)
         f.close()
         print('Created file ' + fname)
 
     def set_date(self, date):
-        date = date.split('/')
-        self.month = date[0]
-        self.day = date[1]
-        self.year = date[2]
+        self.date = date
 

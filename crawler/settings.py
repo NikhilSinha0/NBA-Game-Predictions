@@ -2,8 +2,9 @@ import time
 import re
 
 class settings:
-    delay = 0
-    denyList = []
+    def __init__(self):
+        self.delay = 0
+        self.denyList = []
 
     def set_delay(self, seconds):
         self.delay = seconds
