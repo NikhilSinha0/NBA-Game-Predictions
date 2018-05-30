@@ -88,10 +88,10 @@ class game_table:
 
     def table_to_json(self):
         result = "{\n"
-        result += '\'Date\': \''+self.date+'\',\n'
-        result += '\'Away\': {\n'
-        result += '\'Name\': \'' + self.away + '\',\n'
-        result += '\'Players\': [\n'
+        result += '\"Date\": \"'+self.date+'\",\n'
+        result += '\"Away\": {\n'
+        result += '\"Name\": \"' + self.away + '\",\n'
+        result += '\"Players\": [\n'
         items = []
         for key in self.away_scores.keys():
             val = self.away_scores.get(key)[:]
@@ -104,19 +104,19 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             for j in range(len(players[i])):
-                result += ('\',\'' if j!=0 else '\'') + header[j] + '\': \'' + players[i][j]
-            result += "\'}"
+                result += ('\",\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j]
+            result += "\"}"
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
-                result += '\'' + totals[0] +'\': {'
+                result += '\"' + totals[0] +'\": {'
             else:
-                result += ('\',\'' if i!=1 else '\'') + header[i] + '\': \'' + totals[i]
-        result += "\'}\n"
+                result += ('\",\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i]
+        result += "\"}\n"
         result += "},\n"
-        result += '\'Home\': {\n'
-        result += '\'Name\': \'' + self.home + '\',\n'
-        result += '\'Players\': [\n'
+        result += '\"Home\": {\n'
+        result += '\"Name\": \"' + self.home + '\",\n'
+        result += '\"Players\": [\n'
         items = []
         for key in self.home_scores.keys():
             val = self.home_scores.get(key)[:]
@@ -129,15 +129,15 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             for j in range(len(players[i])):
-                result += ('\',\'' if j!=0 else '\'') + header[j] + '\': \'' + players[i][j]
-            result += "\'}"
+                result += ('\",\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j]
+            result += "\"}"
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
-                result += '\'' + totals[0] +'\': {'
+                result += '\"' + totals[0] +'\": {'
             else:
-                result += ('\',\'' if i!=1 else '\'') + header[i] + '\': \'' + totals[i]
-        result += "\'}\n"
+                result += ('\",\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i]
+        result += "\"}\n"
         result += "}\n"
         result += "}"
         path = './game_jsons'
