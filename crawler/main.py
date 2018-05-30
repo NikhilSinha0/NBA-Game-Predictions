@@ -46,6 +46,7 @@ def get_game_scores(link, date_string, setting):
             datarow.append(tdatum.get_text())
         game.add_row(datarow)
     game.table_to_csv()
+    game.table_to_json()
     setting.crawl_delay()
 
 def get_game_links_from_date(date, setting, links):

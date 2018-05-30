@@ -76,7 +76,7 @@ class game_table:
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
-        path = './game_scores'
+        path = './game_csvs'
         fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+("".join(self.date.split("/")))
         if not os.path.exists(path):
             os.makedirs(path)
@@ -84,7 +84,71 @@ class game_table:
         f = open(os.path.join(path, fname+".csv"),"w+")
         f.write(result)
         f.close()
-        print('Created file ' + fname)
+        print('Created file ' + fname+".csv")
+
+    def table_to_json(self):
+        result = "{\n"
+        result += '\'Date\': \''+self.date+'\',\n'
+        result += '\'Away\': {\n'
+        result += '\'Name\': \'' + self.away + '\',\n'
+        result += '\'Players\': [\n'
+        items = []
+        for key in self.away_scores.keys():
+            val = self.away_scores.get(key)[:]
+            val.insert(0, key)
+            items.append(val)
+        header = items[0]
+        players = items[1:-1]
+        totals = items[-1]
+        for i in range(len(players)):
+            result += (',\n' if i!=0 else '')
+            result += '{'
+            for j in range(len(players[i])):
+                result += ('\',\'' if j!=0 else '\'') + header[j] + '\': \'' + players[i][j]
+            result += "\'}"
+        result += '\n],\n'
+        for i in range(len(totals)):
+            if(i==0):
+                result += '\'' + totals[0] +'\': {'
+            else:
+                result += ('\',\'' if i!=1 else '\'') + header[i] + '\': \'' + totals[i]
+        result += "\'}\n"
+        result += "},\n"
+        result += '\'Home\': {\n'
+        result += '\'Name\': \'' + self.home + '\',\n'
+        result += '\'Players\': [\n'
+        items = []
+        for key in self.home_scores.keys():
+            val = self.home_scores.get(key)[:]
+            val.insert(0, key)
+            items.append(val)
+        header = items[0]
+        players = items[1:-1]
+        totals = items[-1]
+        for i in range(len(players)):
+            result += (',\n' if i!=0 else '')
+            result += '{'
+            for j in range(len(players[i])):
+                result += ('\',\'' if j!=0 else '\'') + header[j] + '\': \'' + players[i][j]
+            result += "\'}"
+        result += '\n],\n'
+        for i in range(len(totals)):
+            if(i==0):
+                result += '\'' + totals[0] +'\': {'
+            else:
+                result += ('\',\'' if i!=1 else '\'') + header[i] + '\': \'' + totals[i]
+        result += "\'}\n"
+        result += "}\n"
+        result += "}"
+        path = './game_jsons'
+        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+("".join(self.date.split("/")))
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print('Created path ' + path)
+        f = open(os.path.join(path, fname+".json"),"w+")
+        f.write(result)
+        f.close()
+        print('Created file ' + fname+".json")
 
     def set_date(self, date):
         self.date = date
