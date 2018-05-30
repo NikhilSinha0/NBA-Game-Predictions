@@ -1,3 +1,5 @@
+import os
+
 class game_table:
     home = ''
     away = ''
@@ -75,8 +77,11 @@ class game_table:
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
+        path = './game_scores'
         fname = self.away.split(' ')[1]+'At'+self.home.split(' ')[1]+str(self.month)+str(self.day)+str(self.year)
-        f = open(fname+".txt","w+")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        f = open(os.path.join(path, fname+".txt"),"w+")
         f.write(result)
         f.close
         print('Created file ' + fname)
