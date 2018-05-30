@@ -2,9 +2,9 @@ class game_table:
     home = ''
     away = ''
 
-    month = 00
-    day = 00
-    year = 0000
+    month = ''
+    day = ''
+    year = ''
 
     home_scores = {}
     away_scores = {}
@@ -79,11 +79,11 @@ class game_table:
         f = open(fname+".txt","w+")
         f.write(result)
         f.close
+        print('Created file ' + fname)
 
     def set_date(self, date):
         date = date.split('/')
-        print(date)
-        self.month = int(date[0])
-        self.day = int(date[1])
-        self.year = int(date[2])
+        self.month = date[0]
+        self.day = date[1]
+        self.year = date[2]
 
