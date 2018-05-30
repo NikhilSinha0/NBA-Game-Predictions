@@ -81,7 +81,7 @@ class game_table:
         if not os.path.exists(path):
             os.makedirs(path)
             print('Created path ' + path)
-        f = open(os.path.join(path, fname+".txt"),"w+")
+        f = open(os.path.join(path, fname+".csv"),"w+")
         f.write(result)
         f.close()
         print('Created file ' + fname)
