@@ -27,6 +27,7 @@ def get_game_scores(link, setting):
     page_response = requests.get(link)
     soup = BeautifulSoup(page_response.content, "html.parser")
     game = game_table()
+    game.set_date('03/23/2018')
     headers = soup.find_all('div', class_ = 'section_heading')
     for header in headers:
         h2s = header.find_all('h2')

@@ -2,6 +2,10 @@ class game_table:
     home = ''
     away = ''
 
+    month = 00
+    day = 00
+    year = 0000
+
     home_scores = {}
     away_scores = {}
 
@@ -10,9 +14,9 @@ class game_table:
 
     def add_name(self, name):
         if(self.away):
-            self.home = name
+            self.home = name.split('(')[0].strip()
         else:
-            self.away = name
+            self.away = name.split('(')[0].strip()
 
     def add_to_home_scores(self, row):
         if(self.home_scores.get(row[0])):
@@ -71,5 +75,15 @@ class game_table:
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
-        print(result)
+        fname = self.away.split(' ')[1]+'At'+self.home.split(' ')[1]+str(self.month)+str(self.day)+str(self.year)
+        f = open(fname+".txt","w+")
+        f.write(result)
+        f.close
+
+    def set_date(self, date):
+        date = date.split('/')
+        print(date)
+        self.month = int(date[0])
+        self.day = int(date[1])
+        self.year = int(date[2])
 
