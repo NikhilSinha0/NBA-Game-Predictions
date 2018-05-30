@@ -83,7 +83,7 @@ class game_table:
             os.makedirs(path)
         f = open(os.path.join(path, fname+".txt"),"w+")
         f.write(result)
-        f.close
+        f.close()
         print('Created file ' + fname)
 
     def set_date(self, date):
