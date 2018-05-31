@@ -95,7 +95,7 @@ class game_table:
             result += name + ',' + ','.join(stats)
             result += '\n'
         path = './game_csvs'
-        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+("".join(self.date.split("/")))
+        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+"_"+("_".join(self.date.split("/")))
         if not os.path.exists(path):
             os.makedirs(path)
             print('Created path ' + path)
@@ -167,7 +167,7 @@ class game_table:
         result += "}\n"
         result += "}"
         path = './game_jsons'
-        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+("".join(self.date.split("/")))
+        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+"_"+("_".join(self.date.split("/")))
         if not os.path.exists(path):
             os.makedirs(path)
             print('Created path ' + path)
