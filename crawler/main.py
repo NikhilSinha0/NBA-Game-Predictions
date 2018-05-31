@@ -30,11 +30,18 @@ def get_game_scores(link, date_string, setting):
     game = game_table()
     game.set_date(date_string)
     headers = soup.find_all('div', class_ = 'section_heading')
+    prev = soup.find_all(class_ = 'prev')
+    prevs = []
+    for item in prev:
+        last_location = item['href'].split('.')[0][-3:]
+        last_time = item['href'].split('/')[-1].split('.')[0][:-4]
+        prevs.append([item.parent.parent.find_all('strong')[0].get_text().strip('\n'), last_location, last_time])
     for header in headers:
         h2s = header.find_all('h2')
         for h2 in h2s:
             if('(' in h2.get_text()): #only get team names
                 game.add_name(h2.get_text())
+    game.add_last_game_info(prevs)
     rows = soup.find_all('tr')
     for row in rows:
         datarow = []

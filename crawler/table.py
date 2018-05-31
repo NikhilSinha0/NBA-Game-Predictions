@@ -5,6 +5,11 @@ class game_table:
         self.home = ''
         self.away = ''
 
+        self.home_last_game = ''
+        self.home_last_game_location = ''
+        self.away_last_game = ''
+        self.away_last_game_location = ''
+
         self.date = ''
 
         self.home_scores = {}
@@ -18,6 +23,15 @@ class game_table:
             self.home = name.split('(')[0].strip()
         else:
             self.away = name.split('(')[0].strip()
+
+    def add_last_game_info(self, prevs):
+        for prev_game in prevs:
+            if(self.away==prev_game[0]):
+                self.away_last_game_location = prev_game[1]
+                self.away_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
+            else:
+                self.home_last_game_location = prev_game[1]
+                self.home_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
 
     def add_to_home_scores(self, row):
         if(self.home_scores.get(row[0])):
