@@ -4,6 +4,8 @@ from settings import settings
 from table import game_table
 from links import links
 from datetime import datetime
+from datetime import timedelta
+import time
 
 def get_robots_txt(link, setting):
     page_response = requests.get(link)
@@ -99,9 +101,12 @@ def main():
     print("\nInput the start and end dates for the scraper to get game data from\n")
     start_date = input("Start date (MM/DD/YYYY): ")
     end_date = input("End date (MM/DD/YYYY): ")
+    start = time.time()
     get_robots_txt('https://www.basketball-reference.com/robots.txt', setting)
     scrape_by_dates(start_date, end_date, setting, linksobj)
     #linksobj.print_links()
     scrape_games_by_links(setting, linksobj)
+    end = time.time()
+    print("Done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
 
 main()

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 class game_table:
     def __init__(self):
@@ -6,8 +7,10 @@ class game_table:
         self.away = ''
 
         self.home_last_game = ''
+        self.home_days_rest = ''
         self.home_last_game_location = ''
         self.away_last_game = ''
+        self.away_days_rest = ''
         self.away_last_game_location = ''
 
         self.date = ''
@@ -28,10 +31,16 @@ class game_table:
         for prev_game in prevs:
             if(self.away==prev_game[0]):
                 self.away_last_game_location = prev_game[1]
-                self.away_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
+                self.away_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
+                away_last = datetime.strptime(self.away_last_game, "%m/%d/%Y")
+                today = datetime.strptime(self.date, "%m/%d/%Y")
+                self.away_days_rest = str((today - away_last).days-1)
             else:
                 self.home_last_game_location = prev_game[1]
                 self.home_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
+                home_last = datetime.strptime(self.home_last_game, "%m/%d/%Y")
+                today = datetime.strptime(self.date, "%m/%d/%Y")
+                self.home_days_rest = str((today - home_last).days-1) #Playing a game on next day = 0 days rest
 
     def add_to_home_scores(self, row):
         if(self.home_scores.get(row[0])):
@@ -85,12 +94,14 @@ class game_table:
         result += 'Away: ' + self.away + '\n'
         result += 'Last Game Date: '+self.away_last_game+'\n'
         result += 'Last Game Location: '+self.away_last_game_location+'\n'
+        result += 'Days Rest: '+self.away_days_rest+'\n'
         for name, stats in self.away_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
         result += 'Home: ' + self.home + '\n'
         result += 'Last Game Date: '+self.home_last_game+'\n'
         result += 'Last Game Location: '+self.home_last_game_location+'\n'
+        result += 'Days Rest: '+self.home_days_rest+'\n'
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
