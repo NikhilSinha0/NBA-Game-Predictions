@@ -37,16 +37,16 @@ class game_table:
             if(self.away==prev_game[0]):
                 self.away_last_game_location = prev_game[1]
                 self.away_dist_travelled = str(self.get_dist_between_stadiums(self.home, self.away_last_game_location))
-                self.away_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
-                away_last = datetime.strptime(self.away_last_game, "%m/%d/%Y")
-                today = datetime.strptime(self.date, "%m/%d/%Y")
+                self.away_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
+                away_last = datetime.strptime(self.away_last_game, "%Y/%m/%d")
+                today = datetime.strptime(self.date, "%Y/%m/%d")
                 self.away_days_rest = str((today - away_last).days-1)
             else:
                 self.home_last_game_location = prev_game[1]
                 self.home_dist_travelled = str(self.get_dist_between_stadiums(self.home, self.home_last_game_location))
-                self.home_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
-                home_last = datetime.strptime(self.home_last_game, "%m/%d/%Y")
-                today = datetime.strptime(self.date, "%m/%d/%Y")
+                self.home_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
+                home_last = datetime.strptime(self.home_last_game, "%Y/%m/%d")
+                today = datetime.strptime(self.date, "%Y/%m/%d")
                 self.home_days_rest = str((today - home_last).days-1) #Playing a game on next day = 0 days rest
 
     def add_to_home_scores(self, row):
@@ -206,7 +206,7 @@ class game_table:
             mm = '0' + mm
         if(len(dd)<2):
             dd = '0' + dd
-        self.date = "/".join([mm, dd, yy])
+        self.date = "/".join([yy, mm, dd])
 
     def get_dist_between_stadiums(self, name1, name2):
         lat1, lon1 = [radians(x) for x in stadiums.get(name1)]

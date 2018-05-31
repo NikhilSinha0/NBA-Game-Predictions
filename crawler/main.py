@@ -99,6 +99,7 @@ def main():
     setting = settings()
     linksobj = links()
     print("\nInput the start and end dates for the scraper to get game data from\n")
+    print("Dates will be output in YYYY/MM/DD for ordering purposes")
     start_date = input("Start date (MM/DD/YYYY): ")
     end_date = input("End date (MM/DD/YYYY): ")
     start = time.time()
