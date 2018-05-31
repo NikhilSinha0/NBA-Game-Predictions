@@ -31,7 +31,7 @@ class game_table:
                 self.away_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
             else:
                 self.home_last_game_location = prev_game[1]
-                self.home_last_game = "/".join([prev_game[2][:4], prev_game[2][4:6], prev_game[2][6:]])
+                self.home_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
 
     def add_to_home_scores(self, row):
         if(self.home_scores.get(row[0])):
@@ -83,10 +83,14 @@ class game_table:
     def table_to_csv(self):
         result = 'Date: '+self.date+'\n'
         result += 'Away: ' + self.away + '\n'
+        result += 'Last Game Date: '+self.away_last_game+'\n'
+        result += 'Last Game Location: '+self.away_last_game_location+'\n'
         for name, stats in self.away_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
         result += 'Home: ' + self.home + '\n'
+        result += 'Last Game Date: '+self.home_last_game+'\n'
+        result += 'Last Game Location: '+self.home_last_game_location+'\n'
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
@@ -105,6 +109,10 @@ class game_table:
         result += '\"Date\": \"'+self.date+'\",\n'
         result += '\"Away\": {\n'
         result += '\"Name\": \"' + self.away + '\",\n'
+        result += '\"Last Game\": {\n'
+        result += '\"Date: \": \"' + self.away_last_game + '\",\n'
+        result += '\"Location: \": \"' + self.away_last_game_location + '\"\n'
+        result += '},\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.away_scores.keys():
@@ -130,6 +138,10 @@ class game_table:
         result += "},\n"
         result += '\"Home\": {\n'
         result += '\"Name\": \"' + self.home + '\",\n'
+        result += '\"Last Game\": {\n'
+        result += '\"Date: \": \"' + self.home_last_game + '\",\n'
+        result += '\"Location: \": \"' + self.home_last_game_location + '\"\n'
+        result += '},\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.home_scores.keys():
