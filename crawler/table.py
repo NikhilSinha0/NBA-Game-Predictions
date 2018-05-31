@@ -124,6 +124,7 @@ class game_table:
         result += '\"Date: \": \"' + self.away_last_game + '\",\n'
         result += '\"Location: \": \"' + self.away_last_game_location + '\"\n'
         result += '},\n'
+        result += '\"Days Rest\": \"' + self.away_days_rest + '\",\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.away_scores.keys():
@@ -153,6 +154,7 @@ class game_table:
         result += '\"Date: \": \"' + self.home_last_game + '\",\n'
         result += '\"Location: \": \"' + self.home_last_game_location + '\"\n'
         result += '},\n'
+        result += '\"Days Rest\": \"' + self.home_days_rest + '\",\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.home_scores.keys():
