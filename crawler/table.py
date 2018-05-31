@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+from math import sin, cos, radians, atan2, sqrt
+from stadiums import stadiums
 
 class game_table:
     def __init__(self):
@@ -9,9 +11,12 @@ class game_table:
         self.home_last_game = ''
         self.home_days_rest = ''
         self.home_last_game_location = ''
+        self.home_dist_travelled = ''
+
         self.away_last_game = ''
         self.away_days_rest = ''
         self.away_last_game_location = ''
+        self.away_dist_travelled = ''
 
         self.date = ''
 
@@ -31,12 +36,14 @@ class game_table:
         for prev_game in prevs:
             if(self.away==prev_game[0]):
                 self.away_last_game_location = prev_game[1]
+                self.away_dist_travelled = str(self.get_dist_between_stadiums(self.home, self.away_last_game_location))
                 self.away_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
                 away_last = datetime.strptime(self.away_last_game, "%m/%d/%Y")
                 today = datetime.strptime(self.date, "%m/%d/%Y")
                 self.away_days_rest = str((today - away_last).days-1)
             else:
                 self.home_last_game_location = prev_game[1]
+                self.home_dist_travelled = str(self.get_dist_between_stadiums(self.home, self.home_last_game_location))
                 self.home_last_game = "/".join([prev_game[2][4:6], prev_game[2][6:], prev_game[2][:4]])
                 home_last = datetime.strptime(self.home_last_game, "%m/%d/%Y")
                 today = datetime.strptime(self.date, "%m/%d/%Y")
@@ -95,6 +102,7 @@ class game_table:
         result += 'Last Game Date: '+self.away_last_game+'\n'
         result += 'Last Game Location: '+self.away_last_game_location+'\n'
         result += 'Days Rest: '+self.away_days_rest+'\n'
+        result += 'Distance Travelled: '+self.away_dist_travelled+'\n'
         for name, stats in self.away_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
@@ -102,6 +110,7 @@ class game_table:
         result += 'Last Game Date: '+self.home_last_game+'\n'
         result += 'Last Game Location: '+self.home_last_game_location+'\n'
         result += 'Days Rest: '+self.home_days_rest+'\n'
+        result += 'Distance Travelled: '+self.home_dist_travelled+'\n'
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
             result += '\n'
@@ -125,6 +134,7 @@ class game_table:
         result += '\"Location: \": \"' + self.away_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Days Rest\": \"' + self.away_days_rest + '\",\n'
+        result += '\"Distance Travelled\": \"' + self.away_dist_travelled + '\",\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.away_scores.keys():
@@ -155,6 +165,7 @@ class game_table:
         result += '\"Location: \": \"' + self.home_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Days Rest\": \"' + self.home_days_rest + '\",\n'
+        result += '\"Distance Travelled\": \"' + self.home_dist_travelled + '\",\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.home_scores.keys():
@@ -191,4 +202,14 @@ class game_table:
 
     def set_date(self, date):
         self.date = date
+
+    def get_dist_between_stadiums(self, name1, name2):
+        lat1, lon1 = [radians(x) for x in stadiums.get(name1)]
+        lat2, lon2 = [radians(x) for x in stadiums.get(name2)]
+        dlon = lon2 - lon1 
+        dlat = lat2 - lat1 
+        a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2 
+        c = 2 * atan2( sqrt(a), sqrt(1-a) ) 
+        d = 3963.1676 * c #radius in miles so distance calculated is in miles
+        return (int(d*10000)/10000) #convert to 4 decimal places
 
