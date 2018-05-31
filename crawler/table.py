@@ -115,7 +115,7 @@ class game_table:
             result += name + ',' + ','.join(stats)
             result += '\n'
         path = './game_csvs'
-        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+"_"+("_".join(self.date.split("/")))
+        fname = ("_".join(self.date.split("/")))+"_"+self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]
         if not os.path.exists(path):
             os.makedirs(path)
             print('Created path ' + path)
@@ -191,7 +191,7 @@ class game_table:
         result += "}\n"
         result += "}"
         path = './game_jsons'
-        fname = self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]+"_"+("_".join(self.date.split("/")))
+        fname = ("_".join(self.date.split("/")))+"_"+self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]
         if not os.path.exists(path):
             os.makedirs(path)
             print('Created path ' + path)
@@ -201,7 +201,12 @@ class game_table:
         print('Created file ' + fname+".json")
 
     def set_date(self, date):
-        self.date = date
+        mm, dd, yy = date.split('/')
+        if(len(mm)<2):
+            mm = '0' + mm
+        if(len(dd)<2):
+            dd = '0' + dd
+        self.date = "/".join([mm, dd, yy])
 
     def get_dist_between_stadiums(self, name1, name2):
         lat1, lon1 = [radians(x) for x in stadiums.get(name1)]
