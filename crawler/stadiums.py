@@ -53,6 +53,8 @@ stadiums = {
     'Phoenix Suns': [33.4457, 112.0712],
     'OKC': [35.4634, 97.5151],
     'Oklahoma City Thunder': [35.4634, 97.5151],
+    'SEA': [47.6221, 122.3540],
+    'Seattle Supersonics': [47.6221, 122.3540],
     'MIN': [44.9795, 93.2762],
     'Minnesota Timberwolves': [44.9795, 93.2762],
     'POR': [45.5316, 122.6668],
