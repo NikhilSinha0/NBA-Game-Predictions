@@ -1,6 +1,8 @@
+from collections import deque
+
 class links:
     def __init__(self):
-        self.unvisited = []
+        self.unvisited = deque([])
         self.visited = []
         self.base_link = 'https://www.basketball-reference.com'
 
@@ -9,7 +11,7 @@ class links:
             self.unvisited.append([self.base_link + link, date_string])
         
     def get_next_link(self):
-        link, date_string = self.unvisited.pop()
+        link, date_string = self.unvisited.popleft()
         self.visited.append(link)
         return link, date_string
 
