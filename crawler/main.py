@@ -110,4 +110,5 @@ def main():
     end = time.time()
     print("Done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
 
-main()
+if(__name__=='__main__'):
+    main()
