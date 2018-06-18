@@ -14,6 +14,9 @@ class teams:
         else:
             return self.teams[name].get_last_seven()
 
+    def remove_team(self, name):
+        self.teams.pop(name, None)
+
 class team:
     def __init__(self):
         self.name = ''
