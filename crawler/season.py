@@ -1,4 +1,4 @@
-class teams:
+class season:
     def __init__(self):
         self.teams = {}
 
@@ -10,7 +10,7 @@ class teams:
 
     def get_last_seven(self, name):
         if(not (name in self.teams.keys())):
-            return None
+            return []
         else:
             return self.teams[name].get_last_seven()
 

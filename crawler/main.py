@@ -5,6 +5,7 @@ from table import game_table
 from links import links
 from datetime import datetime
 from datetime import timedelta
+from season import season
 import time
 
 def get_robots_txt(link, setting):
@@ -24,7 +25,7 @@ def get_robots_txt(link, setting):
     print("Got robots.txt")
     setting.crawl_delay()
 
-def get_game_scores(link, date_string, setting):
+def get_game_scores(link, date_string, setting, season):
     if(setting.in_deny_list(link)):
         return
     page_response = requests.get(link)
@@ -54,6 +55,7 @@ def get_game_scores(link, date_string, setting):
         for tdatum in tdata:
             datarow.append(tdatum.get_text())
         game.add_row(datarow)
+    game.sync_last_game_info(season)
     game.table_to_csv()
     game.table_to_json()
     setting.crawl_delay()
@@ -81,10 +83,10 @@ def scrape_by_dates(date1, date2, setting, links):
         next_link = get_game_links_from_date(d1, setting, links)
         d1 = extract_date_from_link(next_link)
 
-def scrape_games_by_links(settings, links):
+def scrape_games_by_links(settings, links, season):
     while(links.has_links()):
         link, date = links.get_next_link()
-        get_game_scores(link, date, settings)
+        get_game_scores(link, date, settings, season)
 
 def format_date_link(date):
     mm, dd, yy = [str(x) for x in date]
@@ -98,6 +100,7 @@ def extract_date_from_link(link):
 def main():
     setting = settings()
     linksobj = links()
+    seasonsobj = season()
     print("\nInput the start and end dates for the scraper to get game data from\n")
     print("Dates will be output in YYYY/MM/DD for ordering purposes")
     start_date = input("Start date (MM/DD/YYYY): ")
@@ -106,7 +109,7 @@ def main():
     get_robots_txt('https://www.basketball-reference.com/robots.txt', setting)
     scrape_by_dates(start_date, end_date, setting, linksobj)
     #linksobj.print_links()
-    scrape_games_by_links(setting, linksobj)
+    scrape_games_by_links(setting, linksobj, seasonsobj)
     end = time.time()
     print("Done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
 

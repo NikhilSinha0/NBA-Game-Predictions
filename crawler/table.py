@@ -32,6 +32,22 @@ class game_table:
         else:
             self.away = name.split('(')[0].strip()
 
+    def sync_last_game_info(self, season):
+        if(not(self.home_days_rest and self.home_days_rest)):
+            season.remove_team(self.home)
+        else:
+            season.add_game(self.home, self.home_dist_travelled, self.home_days_rest)
+        if(not(self.away_days_rest and self.away_days_rest)):
+            season.remove_team(self.away)
+        else:
+            season.add_game(self.away, self.away_dist_travelled, self.away_days_rest)
+        home_last_7_games = season.get_last_seven(self.home)
+        self.home_last_7_rest = [x.rest for x in home_last_7_games]
+        self.home_last_7_dist = [x.distance for x in home_last_7_games]
+        away_last_7_games = season.get_last_seven(self.away)
+        self.away_last_7_rest = [x.rest for x in away_last_7_games]
+        self.away_last_7_dist = [x.distance for x in away_last_7_games]
+
     def add_last_game_info(self, prevs):
         for prev_game in prevs:
             if(self.away==prev_game[0]):
