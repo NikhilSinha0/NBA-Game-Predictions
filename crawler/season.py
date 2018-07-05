@@ -32,7 +32,7 @@ class team:
             return self.games[-7:]
 
     def add_game(self, game):
-        games.append(game)
+        self.games.append(game)
 
 class game_record:
     def __init__(self):

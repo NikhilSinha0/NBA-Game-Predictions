@@ -46,11 +46,11 @@ class game_table:
         else:
             season.add_game(self.away, self.away_dist_travelled, self.away_days_rest)
         home_last_7_games = season.get_last_seven(self.home)
-        self.home_last_7_rest = str(reduce((lambda x, y: int(x) + int(y)), [x.rest for x in home_last_7_games]))
-        self.home_last_7_dist = str(reduce((lambda x, y: int(x) + int(y)), [x.distance for x in home_last_7_games]))
+        self.home_last_7_rest = str(sum([int(x.rest) for x in home_last_7_games]))
+        self.home_last_7_dist = str(sum([float(x.distance) for x in home_last_7_games]))
         away_last_7_games = season.get_last_seven(self.away)
-        self.away_last_7_rest = str(reduce((lambda x, y: int(x) + int(y)), [x.rest for x in away_last_7_games]))
-        self.away_last_7_dist = str(reduce((lambda x, y: int(x) + int(y)), [x.distance for x in away_last_7_game]))
+        self.away_last_7_rest = str(sum([int(x.rest) for x in away_last_7_games]))
+        self.away_last_7_dist = str(sum([float(x.distance) for x in away_last_7_games]))
 
     def add_last_game_info(self, prevs):
         for prev_game in prevs:
