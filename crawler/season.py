@@ -8,11 +8,11 @@ class season:
             self.teams[name] = team()
         self.teams[name].add_game(rec)
 
-    def get_last_seven(self, name):
+    def get_last_three(self, name):
         if(not (name in self.teams.keys())):
             return []
         else:
-            return self.teams[name].get_last_seven()
+            return self.teams[name].get_last_three()
 
     def remove_team(self, name):
         self.teams.pop(name, None)
@@ -25,11 +25,11 @@ class team:
     def set_name(self, name):
         self.name = name
 
-    def get_last_seven(self):
-        if(len(self.games) < 7):
+    def get_last_three(self):
+        if(len(self.games) < 3):
             return self.games
         else:
-            return self.games[-7:]
+            return self.games[-3:]
 
     def add_game(self, game):
         self.games.append(game)
