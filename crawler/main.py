@@ -55,6 +55,7 @@ def get_game_scores(link, date_string, setting, season):
         for tdatum in tdata:
             datarow.append(tdatum.get_text())
         game.add_row(datarow)
+    game.set_win_loss()
     game.sync_last_game_info(season)
     game.table_to_csv()
     game.table_to_json()

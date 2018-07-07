@@ -14,6 +14,7 @@ class game_table:
         self.home_dist_travelled = ''
         self.home_last_7_rest = ''
         self.home_last_7_dist = ''
+        self.home_result = ''
 
         self.away_last_game = ''
         self.away_days_rest = ''
@@ -21,6 +22,7 @@ class game_table:
         self.away_dist_travelled = ''
         self.away_last_7_rest = ''
         self.away_last_7_dist = ''
+        self.away_result = ''
 
         self.date = ''
 
@@ -46,11 +48,18 @@ class game_table:
         else:
             season.add_game(self.away, self.away_dist_travelled, self.away_days_rest)
         home_last_7_games = season.get_last_seven(self.home)
-        self.home_last_7_rest = str(sum([int(x.rest) for x in home_last_7_games]))
+        self.home_last_7_rest = '['+','.join([x.rest for x in home_last_7_games])+']'
         self.home_last_7_dist = str(sum([float(x.distance) for x in home_last_7_games]))
         away_last_7_games = season.get_last_seven(self.away)
-        self.away_last_7_rest = str(sum([int(x.rest) for x in away_last_7_games]))
+        self.away_last_7_rest = '['+','.join([x.rest for x in away_last_7_games])+']'
         self.away_last_7_dist = str(sum([float(x.distance) for x in away_last_7_games]))
+
+    def set_win_loss(self):
+        index = self.away_scores["Name"].index("PTS")
+        away_score = int(self.away_scores["Team Totals"][index])
+        home_score = int(self.home_scores["Team Totals"][index])
+        self.away_result = '1' if away_score > home_score else '0'
+        self.home_result = '0' if away_score > home_score else '1'
 
     def add_last_game_info(self, prevs):
         for prev_game in prevs:
@@ -121,9 +130,10 @@ class game_table:
         result += 'Away: ' + self.away + '\n'
         result += 'Last Game Date: '+self.away_last_game+'\n'
         result += 'Last Game Location: '+self.away_last_game_location+'\n'
+        result += 'Win: '+self.away_result+'\n'
         result += 'Days Rest: '+self.away_days_rest+'\n'
-        result += 'Last 7 Games Rest: '+self.away_last_7_rest+'\n'
         result += 'Distance Travelled: '+self.away_dist_travelled+'\n'
+        result += 'Last 7 Games Rest: ,'+self.away_last_7_rest[1:-1]+'\n'
         result += 'Last 7 Games Distance Travelled: '+self.away_last_7_dist+'\n'
         for name, stats in self.away_scores.items():
             result += name + ',' + ','.join(stats)
@@ -131,9 +141,10 @@ class game_table:
         result += 'Home: ' + self.home + '\n'
         result += 'Last Game Date: '+self.home_last_game+'\n'
         result += 'Last Game Location: '+self.home_last_game_location+'\n'
+        result += 'Win: '+self.home_result+'\n'
         result += 'Days Rest: '+self.home_days_rest+'\n'
-        result += 'Last 7 Games Rest: '+self.home_last_7_rest+'\n'
         result += 'Distance Travelled: '+self.home_dist_travelled+'\n'
+        result += 'Last 7 Games Rest: ,'+self.home_last_7_rest[1:-1]+'\n'
         result += 'Last 7 Games Distance Travelled: '+self.home_last_7_dist+'\n'
         for name, stats in self.home_scores.items():
             result += name + ',' + ','.join(stats)
@@ -157,10 +168,11 @@ class game_table:
         result += '\"Date: \": \"' + self.away_last_game + '\",\n'
         result += '\"Location: \": \"' + self.away_last_game_location + '\"\n'
         result += '},\n'
-        result += '\"Days Rest\": \"' + self.away_days_rest + '\",\n'
-        result += '\"Last 7 Games Rest\": \"' + self.away_last_7_rest + '\",\n'
-        result += '\"Distance Travelled\": \"' + self.away_dist_travelled + '\",\n'
-        result += '\"Last 7 Games Distance Travelled\": \"' + self.away_last_7_dist + '\",\n'
+        result += '\"Win\": ' + self.away_result + ',\n'
+        result += '\"Days Rest\": ' + self.away_days_rest + ',\n'
+        result += '\"Distance Travelled\": ' + self.away_dist_travelled + ',\n'
+        result += '\"Last 7 Games Rest\": ' + self.away_last_7_rest + ',\n'
+        result += '\"Last 7 Games Distance Travelled\": ' + self.away_last_7_dist + ',\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.away_scores.keys():
@@ -174,15 +186,21 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             for j in range(len(players[i])):
-                result += ('\",\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j]
-            result += "\"}"
+                if(self.is_number(players[i][j])):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                else:
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
+            result += "}"
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
                 result += '\"' + totals[0] +'\": {'
             else:
-                result += ('\",\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i]
-        result += "\"}\n"
+                if(self.is_number(totals[i])):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                else:
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i] + '\"'
+        result += "}\n"
         result += "},\n"
         result += '\"Home\": {\n'
         result += '\"Name\": \"' + self.home + '\",\n'
@@ -190,10 +208,11 @@ class game_table:
         result += '\"Date: \": \"' + self.home_last_game + '\",\n'
         result += '\"Location: \": \"' + self.home_last_game_location + '\"\n'
         result += '},\n'
-        result += '\"Days Rest\": \"' + self.home_days_rest + '\",\n'
-        result += '\"Last 7 Games Rest\": \"' + self.home_last_7_rest + '\",\n'
-        result += '\"Distance Travelled\": \"' + self.home_dist_travelled + '\",\n'
-        result += '\"Last 7 Games Distance Travelled\": \"' + self.home_last_7_dist + '\",\n'
+        result += '\"Win\": ' + self.home_result + ',\n'
+        result += '\"Days Rest\": ' + self.home_days_rest + ',\n'
+        result += '\"Distance Travelled\": ' + self.home_dist_travelled + ',\n'
+        result += '\"Last 7 Games Rest\": ' + self.home_last_7_rest + ',\n'
+        result += '\"Last 7 Games Distance Travelled\": ' + self.home_last_7_dist + ',\n'
         result += '\"Players\": [\n'
         items = []
         for key in self.home_scores.keys():
@@ -207,15 +226,21 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             for j in range(len(players[i])):
-                result += ('\",\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j]
-            result += "\"}"
+                if(self.is_number(players[i][j])):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                else:
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
+            result += "}"
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
                 result += '\"' + totals[0] +'\": {'
             else:
-                result += ('\",\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i]
-        result += "\"}\n"
+                if(self.is_number(totals[i])):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                else:
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i] + '\"'
+        result += "}\n"
         result += "}\n"
         result += "}"
         path = './game_jsons'
@@ -245,4 +270,11 @@ class game_table:
         c = 2 * atan2( sqrt(a), sqrt(1-a) ) 
         d = 3963.1676 * c #radius in miles so distance calculated is in miles
         return (int(d*10000)/10000) #convert to 4 decimal places
+
+    def is_number(self, s):
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
 
