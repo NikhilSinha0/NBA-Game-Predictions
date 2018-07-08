@@ -32,6 +32,8 @@ class team:
             return self.games[-3:]
 
     def add_game(self, game):
+        if(len(self.games) == 3):
+            self.games = self.games[1:]
         self.games.append(game)
 
 class game_record:
