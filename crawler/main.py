@@ -7,6 +7,7 @@ from datetime import datetime
 from datetime import timedelta
 from season import season
 import time
+import sys
 
 def get_robots_txt(link, setting):
     page_response = requests.get(link)
@@ -68,7 +69,11 @@ def get_game_links_from_date(date, setting, links):
         return
     page_response = requests.get(link)
     soup = BeautifulSoup(page_response.content, "html.parser")
-    next_link = soup.find_all(class_='next')[0]
+    next_day = soup.find_all(class_='next')
+    if(len(next_day) < 1):
+        print("Dropping date " + date_string)
+        return None
+    next_link = next_day[0]
     game_links = soup.find_all(class_ = 'gamelink')
     cleaned_game_links = [x.find_all('a')[0]['href'] for x in game_links]
     for game_link in cleaned_game_links:
@@ -82,6 +87,9 @@ def scrape_by_dates(date1, date2, setting, links):
     d2 = [int(x) for x in date2.split('/')]
     while(datetime(d1[2], d1[0], d1[1]) <= datetime(d2[2], d2[0], d2[1])):
         next_link = get_game_links_from_date(d1, setting, links)
+        if(next_link==None):
+            print("Dropped a date, getting games until "+"/".join([str(x) for x in d1]))
+            return
         d1 = extract_date_from_link(next_link)
 
 def scrape_games_by_links(settings, links, season):
@@ -102,10 +110,12 @@ def main():
     setting = settings()
     linksobj = links()
     seasonsobj = season()
-    print("\nInput the start and end dates for the scraper to get game data from\n")
-    print("Dates will be output in YYYY/MM/DD for ordering purposes")
-    start_date = input("Start date (MM/DD/YYYY): ")
-    end_date = input("End date (MM/DD/YYYY): ")
+    args = sys.argv[1:]
+    if(len(args)!=2):
+        print("There should be exactly 2 arguments, the start and end date in MM/DD/YYYY")
+    print("\nDates will be output in YYYY/MM/DD for ordering purposes\n")
+    start_date = args[0]
+    end_date = args[1]
     start = time.time()
     get_robots_txt('https://www.basketball-reference.com/robots.txt', setting)
     scrape_by_dates(start_date, end_date, setting, linksobj)

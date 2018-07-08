@@ -165,8 +165,8 @@ class game_table:
         result += '\"Away\": {\n'
         result += '\"Name\": \"' + self.away + '\",\n'
         result += '\"Last Game\": {\n'
-        result += '\"Date: \": \"' + self.away_last_game + '\",\n'
-        result += '\"Location: \": \"' + self.away_last_game_location + '\"\n'
+        result += '\"Date: \"' + self.away_last_game + '\",\n'
+        result += '\"Location: \"' + self.away_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Win\": ' + self.away_result + ',\n'
         result += '\"Days Rest\": ' + self.away_days_rest + ',\n'
@@ -188,6 +188,10 @@ class game_table:
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                elif(':' in players[i][j]):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
+                elif(players[i][j]==''):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
                 else:
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
             result += "}"
@@ -198,6 +202,10 @@ class game_table:
             else:
                 if(self.is_number(totals[i])):
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                elif(':' in totals[i]):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + self.time_to_float(totals[i])
+                elif(totals[i]==''):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + 'null'
                 else:
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i] + '\"'
         result += "}\n"
@@ -205,8 +213,8 @@ class game_table:
         result += '\"Home\": {\n'
         result += '\"Name\": \"' + self.home + '\",\n'
         result += '\"Last Game\": {\n'
-        result += '\"Date: \": \"' + self.home_last_game + '\",\n'
-        result += '\"Location: \": \"' + self.home_last_game_location + '\"\n'
+        result += '\"Date: \"' + self.home_last_game + '\",\n'
+        result += '\"Location: \"' + self.home_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Win\": ' + self.home_result + ',\n'
         result += '\"Days Rest\": ' + self.home_days_rest + ',\n'
@@ -228,6 +236,10 @@ class game_table:
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                elif(':' in players[i][j]):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
+                elif(players[i][j]==''):
+                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
                 else:
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
             result += "}"
@@ -238,6 +250,10 @@ class game_table:
             else:
                 if(self.is_number(totals[i])):
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                elif(':' in totals[i]):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + self.time_to_float(totals[i])
+                elif(totals[i]==''):
+                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + 'null'
                 else:
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": \"' + totals[i] + '\"'
         result += "}\n"
@@ -277,4 +293,9 @@ class game_table:
             return True
         except ValueError:
             return False
+
+    def time_to_float(self, s):
+        parts = s.split(':')
+        secs = int((100*int(parts[1]))/60)
+        return parts[0]+'.'+str(secs)
 
