@@ -113,6 +113,7 @@ def main():
     args = sys.argv[1:]
     if(len(args)!=2):
         print("There should be exactly 2 arguments, the start and end date in MM/DD/YYYY")
+        return
     print("\nDates will be output in YYYY/MM/DD for ordering purposes\n")
     start_date = args[0]
     end_date = args[1]

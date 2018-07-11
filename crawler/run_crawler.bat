@@ -6,4 +6,5 @@ SETLOCAL EnableDelayedExpansion
 set /a next=%%x+1
 python main.py 10/17/%%x 7/1/!next!
 ENDLOCAL
+timeout /t 30
 )

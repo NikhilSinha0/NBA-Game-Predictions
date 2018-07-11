@@ -165,12 +165,12 @@ class game_table:
         result += '\"Away\": {\n'
         result += '\"Name\": \"' + self.away + '\",\n'
         result += '\"Last Game\": {\n'
-        result += '\"Date: \"' + self.away_last_game + '\",\n'
-        result += '\"Location: \"' + self.away_last_game_location + '\"\n'
+        result += '\"Date\": \"' + self.away_last_game + '\",\n'
+        result += '\"Location\": \"' + self.away_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Win\": ' + self.away_result + ',\n'
-        result += '\"Days Rest\": ' + self.away_days_rest + ',\n'
-        result += '\"Distance Travelled\": ' + self.away_dist_travelled + ',\n'
+        result += '\"Days Rest\": ' + (self.away_days_rest if self.away_days_rest!="" else 'null') + ',\n'
+        result += '\"Distance Travelled\": ' + (self.away_dist_travelled if self.away_dist_travelled!="" else 'null') + ',\n'
         result += '\"Last 3 Games Rest\": ' + self.away_last_3_rest + ',\n'
         result += '\"Last 3 Games Distance Travelled\": ' + self.away_last_3_dist + ',\n'
         result += '\"Players\": [\n'
@@ -187,7 +187,12 @@ class game_table:
             result += '{'
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
-                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                    if(players[i][j][0]=='.'):
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
+                    elif(players[i][j][0]=='+'):
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
+                    else:
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
                 elif(':' in players[i][j]):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
                 elif(players[i][j]==''):
@@ -201,7 +206,12 @@ class game_table:
                 result += '\"' + totals[0] +'\": {'
             else:
                 if(self.is_number(totals[i])):
-                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                    if(totals[i][0]=='.'):
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": 0' + totals[i]
+                    elif(totals[i][0]=='+'):
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i][1:]
+                    else:
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
                 elif(':' in totals[i]):
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + self.time_to_float(totals[i])
                 elif(totals[i]==''):
@@ -213,12 +223,12 @@ class game_table:
         result += '\"Home\": {\n'
         result += '\"Name\": \"' + self.home + '\",\n'
         result += '\"Last Game\": {\n'
-        result += '\"Date: \"' + self.home_last_game + '\",\n'
-        result += '\"Location: \"' + self.home_last_game_location + '\"\n'
+        result += '\"Date\": \"' + self.home_last_game + '\",\n'
+        result += '\"Location\": \"' + self.home_last_game_location + '\"\n'
         result += '},\n'
         result += '\"Win\": ' + self.home_result + ',\n'
-        result += '\"Days Rest\": ' + self.home_days_rest + ',\n'
-        result += '\"Distance Travelled\": ' + self.home_dist_travelled + ',\n'
+        result += '\"Days Rest\": ' + (self.home_days_rest if self.home_days_rest!="" else 'null') + ',\n'
+        result += '\"Distance Travelled\": ' + (self.home_dist_travelled if self.home_dist_travelled!="" else 'null') + ',\n'
         result += '\"Last 3 Games Rest\": ' + self.home_last_3_rest + ',\n'
         result += '\"Last 3 Games Distance Travelled\": ' + self.home_last_3_dist + ',\n'
         result += '\"Players\": [\n'
@@ -235,7 +245,12 @@ class game_table:
             result += '{'
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
-                    result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                    if(players[i][j][0]=='.'):
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
+                    elif(players[i][j][0]=='+'):
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
+                    else:
+                        result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
                 elif(':' in players[i][j]):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
                 elif(players[i][j]==''):
@@ -249,7 +264,12 @@ class game_table:
                 result += '\"' + totals[0] +'\": {'
             else:
                 if(self.is_number(totals[i])):
-                    result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
+                    if(totals[i][0]=='.'):
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": 0' + totals[i]
+                    elif(totals[i][0]=='+'):
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i][1:]
+                    else:
+                        result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + totals[i]
                 elif(':' in totals[i]):
                     result += (',\"' if i!=1 else '\"') + header[i] + '\": ' + self.time_to_float(totals[i])
                 elif(totals[i]==''):
@@ -278,8 +298,14 @@ class game_table:
         self.date = "/".join([yy, mm, dd])
 
     def get_dist_between_stadiums(self, name1, name2):
-        lat1, lon1 = [radians(x) for x in stadiums.get(name1)]
-        lat2, lon2 = [radians(x) for x in stadiums.get(name2)]
+        latlon1 = stadiums.get(name1)
+        latlon2 = stadiums.get(name2)
+        if(latlon1 is None):
+            print(name1 + " not found in stadiums dictionary")
+        if(latlon2 is None):
+            print(name2 + " not found in stadiums dictionary")
+        lat1, lon1 = [radians(x) for x in latlon1]
+        lat2, lon2 = [radians(x) for x in latlon2]
         dlon = lon2 - lon1 
         dlat = lat2 - lat1 
         a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2 
