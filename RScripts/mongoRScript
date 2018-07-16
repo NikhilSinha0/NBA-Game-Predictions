@@ -1,0 +1,6 @@
+#Mongo R script
+
+x <- mongo$find('{"$or":[{"Away.Players.Name": "Matt Barnes"},{"Home.Players.Name": "Matt Barnes"}]}')
+
+
+testdate <- mongo$find('{ "Date" : { "$regex" : "2007.*", "$options" : "i" }  }')
