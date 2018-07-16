@@ -1,6 +1,6 @@
 # Summer_Project
 
-Command to run the crawler in /crawler is "python main.py"
+Command to run the crawler in /crawler is "./run_crawler.bat"
 
 Make sure to first install dependencies using the command "pip install -r requirements.txt"
 
