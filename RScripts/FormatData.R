@@ -38,3 +38,19 @@ POR <- AwayPlayers[[1]][[1]][]
 # Example 2 - extracts data for Carlos Boozer in first away Jazz game
 Boozer <- AwayPlayers[[1]][[2]][2,]
 
+
+####################################################################
+## Bring together player data
+
+# First 2 away games for the 76ers
+PHI1 <- AwayPlayers[[1]][[4]][]
+PHI2 <- AwayPlayers[[1]][[15]][]
+
+# Merge games into one data table
+phi <- merge(PHI, PHI2, all = TRUE)
+
+# Compute averages for each player but fails on averages
+agg <- aggregate(. ~ Name, data = phi, na.action = na.pass)
+
+
+
