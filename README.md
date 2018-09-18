@@ -1,4 +1,4 @@
-# Summer_Project
+# NBA-Game-Predictions
 
 Command to run the crawler in /crawler is "./run_crawler.bat"
 
