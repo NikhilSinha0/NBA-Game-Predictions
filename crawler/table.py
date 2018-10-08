@@ -160,6 +160,10 @@ class game_table:
         print('Created file ' + fname+".csv")
 
     def table_to_json(self):
+        player_folder_path = './player_jsons'
+        if not os.path.exists(player_folder_path):
+            os.makedirs(player_folder_path)
+            print('Created path ' + player_folder_path)
         result = "{\n"
         result += '\"Date\": \"'+self.date+'\",\n'
         result += '\"Away\": {\n'
@@ -185,21 +189,41 @@ class game_table:
         for i in range(len(players)):
             result += (',\n' if i!=0 else '')
             result += '{'
+            player_result = "{"
+            player_name = ''
             for j in range(len(players[i])):
+                player_result += "\n"
                 if(self.is_number(players[i][j])):
                     if(players[i][j][0]=='.'):
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
                     elif(players[i][j][0]=='+'):
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
                     else:
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
                 elif(':' in players[i][j]):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
                 elif(players[i][j]==''):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
                 else:
+                    if(header[j]=='Name'):
+                        player_name = '_'.join(players[i][j].split(' '))
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
             result += "}"
+            player_result += "}"
+            player_path = './player_jsons/' + player_name
+            player_fname = (player_name + '-' + "_".join(self.date.split("/")))+"_"+self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]
+            if not os.path.exists(player_path):
+                os.makedirs(player_path)
+                print('Created path ' + player_path)
+            player_f = open(os.path.join(player_path, player_fname+".json"),"w+")
+            player_f.write(player_result)
+            player_f.close()
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
@@ -243,21 +267,40 @@ class game_table:
         for i in range(len(players)):
             result += (',\n' if i!=0 else '')
             result += '{'
+            player_result = "{"
+            player_name = ''
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
                     if(players[i][j][0]=='.'):
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": 0' + players[i][j]
                     elif(players[i][j][0]=='+'):
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j][1:]
                     else:
                         result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
+                        player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + players[i][j]
                 elif(':' in players[i][j]):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + self.time_to_float(players[i][j])
                 elif(players[i][j]==''):
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": ' + 'null'
                 else:
+                    if(header[j]=='Name'):
+                        player_name = '_'.join(players[i][j].split(' '))
                     result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
+                    player_result += (',\"' if j!=0 else '\"') + header[j] + '\": \"' + players[i][j] + '\"'
             result += "}"
+            player_result += "}"
+            player_path = './player_jsons/' + player_name
+            player_fname = (player_name + '-' + "_".join(self.date.split("/")))+"_"+self.away.split(' ')[-1]+'At'+self.home.split(' ')[-1]
+            if not os.path.exists(player_path):
+                os.makedirs(player_path)
+                print('Created path ' + player_path)
+            player_f = open(os.path.join(player_path, player_fname+".json"),"w+")
+            player_f.write(player_result)
+            player_f.close()
         result += '\n],\n'
         for i in range(len(totals)):
             if(i==0):
