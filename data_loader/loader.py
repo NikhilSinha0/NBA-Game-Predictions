@@ -13,11 +13,11 @@ def main():
             }
         }
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
-    recs2 = get_team_last_5(game_records, "Minnesota Timberwolves", "2017/10/30")
+    recs2 = get_team_last_5_full(game_records, "Minnesota Timberwolves", "2017/10/30")
     for item in recs2:
         print(item["Date"])
 
-def get_team_last_5(collection, team_name, date):
+def get_team_last_5_full(collection, team_name, date):
     recs = collection.find(
         {"$and":[
             {
@@ -33,6 +33,23 @@ def get_team_last_5(collection, team_name, date):
         ]}
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
     return recs
+
+def get_team_last_5_reduced(collection, team_name, date):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$lt": date
+                }
+            },
+            {   "$or": [
+                    {"Away.Name": team_name},
+                    {"Home.Name": team_name}
+                ]
+            }
+        ]}
+    ).sort([("Date", pymongo.DESCENDING)]).limit(5)
+    return [rec["Home"] if rec["Home"]["Name"]==team_name else rec["Away"] for rec in recs]
 
 def get_player_last_5(db, player_name, date):
     recs = db['_'.join(player_name.split(' '))].find(
