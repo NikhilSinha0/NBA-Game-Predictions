@@ -190,6 +190,7 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             player_result = "{"
+            player_result += '\"Date\": \"'+self.date+'\",'
             player_name = ''
             for j in range(len(players[i])):
                 player_result += "\n"
@@ -268,6 +269,7 @@ class game_table:
             result += (',\n' if i!=0 else '')
             result += '{'
             player_result = "{"
+            player_result += '\"Date\": \"'+self.date+'\",'
             player_name = ''
             for j in range(len(players[i])):
                 if(self.is_number(players[i][j])):
