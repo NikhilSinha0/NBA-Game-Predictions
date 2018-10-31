@@ -92,7 +92,9 @@ def scrape_by_dates(date1, date2, setting, links):
             return
         d1 = extract_date_from_link(next_link)
 
-def scrape_games_by_links(settings, links, season):
+def scrape_games_by_links(settings, links, season, return_jsons):
+    if return_jsons:
+        return #implement way to return json objects instead of writing to file
     while(links.has_links()):
         link, date = links.get_next_link()
         get_game_scores(link, date, settings, season)
@@ -105,6 +107,17 @@ def extract_date_from_link(link):
     parts = link.split('&')
     mm, dd, yy = [int(part.split('=')[1]) for part in parts]
     return mm, dd, yy
+
+def get_today():
+    setting = settings()
+    linksobj = links()
+    seasonsobj = season()
+    today = datetime.datetime.today()
+    today_date = '/'.join([today.month, today.day, today.year])
+    start_date, end_date = today_date, today_date
+    get_robots_txt('https://www.basketball-reference.com/robots.txt', setting)
+    scrape_by_dates(start_date, end_date, setting, linksobj)
+    scrape_games_by_links(setting, linksobj, seasonsobj, True)
 
 def main():
     setting = settings()
