@@ -30,6 +30,33 @@ def get_players_db():
     players = client["Players"]
     return players
 
+def get_team_game_on_date(collection, team_name, date):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$eq": date
+                }
+            },
+            {   "$or": [
+                    {"Away.Name": team_name},
+                    {"Home.Name": team_name}
+                ]
+            }
+        ]}
+    ).sort([("Date", pymongo.DESCENDING)]).limit(5)
+    return recs
+
+def get_all_games_on_date(collection, date):
+    recs = collection.find(
+        {
+            "Date": {
+                "$eq": date
+            }
+        }
+    ).sort([("Date", pymongo.DESCENDING)]).limit(5)
+    return recs
+
 def get_team_last_5_full(collection, team_name, date):
     recs = collection.find(
         {"$and":[
