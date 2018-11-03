@@ -9,12 +9,12 @@ def main():
     recs = game_records.find(
         {
             "Date": {
-                "$lt": "2017/10/30"
+                "$eq": "2017/10/30"
             }
         }
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
-    for item in recs2:
-        print(item["Home"]["Name"] + " vs " item["Away"]["Name"])
+    for item in recs:
+        print(item["Home"]["Name"] + " vs " + item["Away"]["Name"])
 
 def get_games_collection():
     username = input("Username: ")
