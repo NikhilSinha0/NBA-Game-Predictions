@@ -134,7 +134,7 @@ def main():
     get_robots_txt('https://www.basketball-reference.com/robots.txt', setting)
     scrape_by_dates(start_date, end_date, setting, linksobj)
     #linksobj.print_links()
-    scrape_games_by_links(setting, linksobj, seasonsobj)
+    scrape_games_by_links(setting, linksobj, seasonsobj, False)
     end = time.time()
     print("Done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
 
