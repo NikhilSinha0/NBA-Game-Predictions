@@ -1,10 +1,7 @@
 import pymongo
-import getpass
 
 def main():
-    username = input("Username: ")
-    pswd = getpass.getpass('Password:')
-    client = pymongo.MongoClient("mongodb+srv://"+username+":"+pswd+"@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
+    client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
     game_records = client["NBA-Game-Data"]["Game-Records"]
     recs = game_records.find(
         {
@@ -17,16 +14,12 @@ def main():
         print(item["Home"]["Name"] + " vs " + item["Away"]["Name"])
 
 def get_games_collection():
-    username = input("Username: ")
-    pswd = getpass.getpass('Password:')
-    client = pymongo.MongoClient("mongodb+srv://"+username+":"+pswd+"@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
+    client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
     game_records = client["NBA-Game-Data"]["Game-Records"]
     return game_records
 
 def get_players_collection():
-    username = input("Username: ")
-    pswd = getpass.getpass('Password:')
-    client = pymongo.MongoClient("mongodb+srv://"+username+":"+pswd+"@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
+    client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
     players = client["Players"]["Players"]
     return players
 
