@@ -23,11 +23,11 @@ def get_games_collection():
     game_records = client["NBA-Game-Data"]["Game-Records"]
     return game_records
 
-def get_players_db():
+def get_players_collection():
     username = input("Username: ")
     pswd = getpass.getpass('Password:')
     client = pymongo.MongoClient("mongodb+srv://"+username+":"+pswd+"@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
-    players = client["Players"]
+    players = client["Players"]["Players"]
     return players
 
 def get_team_game_on_date(collection, team_name, date):
@@ -91,13 +91,21 @@ def get_team_last_5_reduced(collection, team_name, date):
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
     return [rec["Home"] if rec["Home"]["Name"]==team_name else rec["Away"] for rec in recs]
 
-def get_player_last_5(db, player_name, date):
-    recs = db['_'.join(player_name.split(' '))].find(
-        {
-            "Date": {
-                "$lt": date
+def get_player_last_5(collection, player_name, date):
+    name = '_'.join(player_name.split(' '))
+    collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$lt": date
+                }
+            },
+            {
+                "Name": {
+                    "$eq": name
+                }
             }
-        }
+        ]}
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
     return recs
 
