@@ -1,17 +1,14 @@
 import pymongo
 
 def main():
-    client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
-    game_records = client["NBA-Game-Data"]["Game-Records"]
-    recs = game_records.find(
-        {
-            "Date": {
-                "$eq": "2017/10/30"
-            }
-        }
-    ).sort([("Date", pymongo.DESCENDING)]).limit(5)
+    games = get_games_collection()
+    players = get_players_collection()
+    recs = get_all_games_on_date(games, "2017/10/17")
+    recs2 = get_player_on_date(players, "LeBron James", "2017/10/17")
     for item in recs:
         print(item["Home"]["Name"] + " vs " + item["Away"]["Name"])
+    for item2 in recs2:
+        print(item2["Name"]+": "+str(item2["PTS"])+" points")
 
 def get_games_collection():
     client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
@@ -85,8 +82,7 @@ def get_team_last_5_reduced(collection, team_name, date):
     return [rec["Home"] if rec["Home"]["Name"]==team_name else rec["Away"] for rec in recs]
 
 def get_player_last_5(collection, player_name, date):
-    name = '_'.join(player_name.split(' '))
-    collection.find(
+    recs = collection.find(
         {"$and":[
             {
                 "Date": {
@@ -95,11 +91,28 @@ def get_player_last_5(collection, player_name, date):
             },
             {
                 "Name": {
-                    "$eq": name
+                    "$eq": player_name
                 }
             }
         ]}
     ).sort([("Date", pymongo.DESCENDING)]).limit(5)
+    return recs
+
+def get_player_on_date(collection, player_name, date):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$eq": date
+                }
+            },
+            {
+                "Name": {
+                    "$eq": player_name
+                }
+            }
+        ]}
+    )
     return recs
 
 if(__name__=='__main__'):
