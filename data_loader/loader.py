@@ -5,10 +5,14 @@ def main():
     players = get_players_collection()
     recs = get_all_games_on_date(games, "2017/10/17")
     recs2 = get_player_on_date(players, "LeBron James", "2017/10/17")
+    recs3 = get_distinct_train_names(players)
+    recs4 = get_partial_batch(players, "Brandon Ingram")
     for item in recs:
         print(item["Home"]["Name"] + " vs " + item["Away"]["Name"])
     for item2 in recs2:
         print(item2["Name"]+": "+str(item2["PTS"])+" points")
+    print(len(recs3))
+    print(list(recs4[0].values()))
 
 def get_games_collection():
     client = pymongo.MongoClient("mongodb+srv://public:bO4kawu45n4yEaD7@nsp-cluster-zqniz.mongodb.net/test?retryWrites=true")
@@ -114,6 +118,58 @@ def get_player_on_date(collection, player_name, date):
         ]}
     )
     return recs
+
+def get_distinct_train_names(collection):
+    names = collection.find({"Date": {"$lt": "2017/10/16"}}).distinct("Name")
+    return names
+
+def get_distinct_test_names(collection):
+    names = collection.find({"Date": {"$gt": "2017/10/16"}}).distinct("Name")
+    return names
+
+def get_partial_batch(collection, pname):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$lt": "2017/10/16"
+                }
+            },
+            {
+                "Name": {
+                    "$eq": pname
+                }
+            },
+            {
+                "PTS": {
+                    "$exists": True #Skips DNPs
+                }
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
+
+def get_partial_test(collection, pname):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$gt": "2017/10/16"
+                }
+            },
+            {
+                "Name": {
+                    "$eq": pname
+                }
+            },
+            {
+                "PTS": {
+                    "$exists": True #Skips DNPs
+                }
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
 
 if(__name__=='__main__'):
     main()
