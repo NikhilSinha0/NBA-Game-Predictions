@@ -19,7 +19,7 @@ def train_keras():
     # model.add(tf.keras.layers.concatenate())
     # model.add(tf.keras.layers.LSTM(5, input_shape=(1, 5)))
     # model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
-    collection = loader.get_players_collection()
+    collection = loader.get_games_collection()
     names = loader.get_distinct_train_names(collection)
     num_batches = (len(names)//10)+1
     data_size = get_data_size(collection)
@@ -41,7 +41,7 @@ def train_keras():
     concat = tf.keras.layers.Concatenate(axis=2)([shaped, in2])
     lstm = tf.keras.layers.LSTM(64)(concat)
     dense = tf.keras.layers.Dense(16, activation='relu')(lstm)
-    out = tf.keras.layers.Dense(1, activation='sigmoid')(dense)
+    out = tf.keras.layers.Dense(2, activation='sigmoid')(dense)
     model = tf.keras.Model(inputs=[in1, in2], outputs=[out])
     opt = tf.keras.optimizers.Adam(lr=0.01)
     model.compile(loss='mean_absolute_error', optimizer=opt)

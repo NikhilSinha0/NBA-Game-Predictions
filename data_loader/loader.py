@@ -141,8 +141,25 @@ def get_partial_batch(collection, pname):
                 }
             },
             {
-                "PTS": {
-                    "$exists": True #Skips DNPs
+                "MP": {
+                    "$type": 1 #Skips DNPs
+                }
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
+
+def get_team_batch(collection, pname):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$lt": "2017/10/16"
+                }
+            },
+            {
+                "Name": {
+                    "$eq": pname
                 }
             }
         ]}
@@ -163,8 +180,25 @@ def get_partial_test(collection, pname):
                 }
             },
             {
-                "PTS": {
-                    "$exists": True #Skips DNPs
+                "MP": {
+                    "$type": 1 #Skips DNPs
+                }
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
+
+    def get_team_test(collection, pname):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$gt": "2017/10/16"
+                }
+            },
+            {
+                "Name": {
+                    "$eq": pname
                 }
             }
         ]}
