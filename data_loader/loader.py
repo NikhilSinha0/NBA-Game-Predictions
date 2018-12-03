@@ -121,10 +121,19 @@ def get_player_on_date(collection, player_name, date):
 
 def get_distinct_train_names(collection):
     names = collection.find({"Date": {"$lt": "2017/10/16"}}).distinct("Name")
+    print(names)
     return names
 
 def get_distinct_test_names(collection):
     names = collection.find({"Date": {"$gt": "2017/10/16"}}).distinct("Name")
+    return names
+
+def get_distinct_team_train_names(collection):
+    names = collection.find({"Date": {"$lt": "2017/10/16"}}).distinct("Home.Name")
+    return names
+
+def get_distinct_team_test_names(collection):
+    names = collection.find({"Date": {"$gt": "2017/10/16"}}).distinct("Home.Name")
     return names
 
 def get_partial_batch(collection, pname):
@@ -149,7 +158,7 @@ def get_partial_batch(collection, pname):
     ).sort([("Date", pymongo.ASCENDING)])
     return list(recs)
 
-def get_team_batch(collection, pname):
+def get_team_batch(collection, team_name):
     recs = collection.find(
         {"$and":[
             {
@@ -157,10 +166,10 @@ def get_team_batch(collection, pname):
                     "$lt": "2017/10/16"
                 }
             },
-            {
-                "Name": {
-                    "$eq": pname
-                }
+            {   "$or": [
+                    {"Away.Name": team_name},
+                    {"Home.Name": team_name}
+                ]
             }
         ]}
     ).sort([("Date", pymongo.ASCENDING)])
@@ -188,7 +197,7 @@ def get_partial_test(collection, pname):
     ).sort([("Date", pymongo.ASCENDING)])
     return list(recs)
 
-    def get_team_test(collection, pname):
+def get_team_test(collection, team_name):
     recs = collection.find(
         {"$and":[
             {
@@ -196,10 +205,10 @@ def get_partial_test(collection, pname):
                     "$gt": "2017/10/16"
                 }
             },
-            {
-                "Name": {
-                    "$eq": pname
-                }
+            {   "$or": [
+                    {"Away.Name": team_name},
+                    {"Home.Name": team_name}
+                ]
             }
         ]}
     ).sort([("Date", pymongo.ASCENDING)])
