@@ -121,7 +121,6 @@ def get_player_on_date(collection, player_name, date):
 
 def get_distinct_train_names(collection):
     names = collection.find({"Date": {"$lt": "2017/10/16"}}).distinct("Name")
-    print(names)
     return names
 
 def get_distinct_test_names(collection):

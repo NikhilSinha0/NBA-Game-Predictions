@@ -90,23 +90,24 @@ def get_test(collection):
     data = []
     labels = []
     pad_arr = [0]*get_data_size(collection)
-    phash = int(hashlib.md5(name.encode('utf-8')).hexdigest()[:8], 16)%100
-    team = get_team_test(collection, name)
-    if(len(team)==0):
-        print("")
-    truncated_data = [get_game_array_from_json(p) for p in team]
-    truncated_data = minmax_scale(truncated_data)
-    indices.extend([phash]*len(team))
-    team_data = []
-    for k in range(len(truncated_data)):
-        if k < 5:
-            arr = [np.array(pad_arr)]*(5-k)
-            arr.extend(truncated_data[0:k])
-        else:
-            arr = truncated_data[k-5:k]
-        team_data.append(arr)
-    data.extend(team_data)
-    labels.extend([get_offensive_defensive_rating(game, name) for game in team])
+    for name in get_distinct_team_test_names(collection):
+        phash = int(hashlib.md5(name.encode('utf-8')).hexdigest()[:8], 16)%100
+        team = get_team_test(collection, name)
+        if(len(team)==0):
+            print("")
+        truncated_data = [get_game_array_from_json(p) for p in team]
+        truncated_data = minmax_scale(truncated_data)
+        indices.extend([phash]*len(team))
+        team_data = []
+        for k in range(len(truncated_data)):
+            if k < 5:
+                arr = [np.array(pad_arr)]*(5-k)
+                arr.extend(truncated_data[0:k])
+            else:
+                arr = truncated_data[k-5:k]
+            team_data.append(arr)
+        data.extend(team_data)
+        labels.extend([get_offensive_defensive_rating(game, name) for game in team])
     return indices, data, labels
 
 def get_data_size(collection):

@@ -20,23 +20,22 @@ def train_keras():
     # model.add(tf.keras.layers.LSTM(5, input_shape=(1, 5)))
     # model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
     collection = loader.get_games_collection()
-    names = loader.get_distinct_team_train_names(collection)
-    num_batches = len(names)
-
+    names = loader.get_distinct_train_names(collection)
+    num_batches = (len(names)//10)+1
     data_size = get_data_size(collection)
     minibatches = []
     print("Getting data")
     start = time.time()
     for num in range(num_batches):
-        minibatch = names[num]
-        print('Getting data for team: '+str(minibatch))
+        minibatch = names[10*num:10*(num+1)]
+        print('Getting data for players: '+str(minibatch))
         indices, data, labels = get_batch(collection, minibatch)
         minibatches.append((minibatch, indices, data, labels))
     end = time.time()
     print("Data gathering done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
     in1 = tf.keras.layers.Input(shape = (1,))
     in2 = tf.keras.layers.Input(shape = (5, data_size,))
-    embed = tf.keras.layers.Embedding(100, 64, input_length=1)(in1)
+    embed = tf.keras.layers.Embedding(10000, 64, input_length=1)(in1)
     flat_embed = tf.keras.layers.Reshape((64,))(embed)
     shaped = tf.keras.layers.RepeatVector(5)(flat_embed)
     concat = tf.keras.layers.Concatenate(axis=2)([shaped, in2])
@@ -61,8 +60,8 @@ def train_keras():
         predictions = labels_scaler.inverse_transform(predictions_normal)
         print(predictions[0:10])
         print(labels[0:10])
-        avg_err = np.sum([abs(predictions[s]-labels[s]) for s in range(len(predictions))], axis=0)/len(predictions)
-        pct_within_1 = np.sum([[1 if abs(predictions[s][j]-labels[s][j])<1 else 0 for j in range(2)] for s in range(len(predictions))], axis=0)/len(predictions)
+        avg_err = sum([abs(predictions[s]-labels[s]) for s in range(len(predictions))])/len(predictions)
+        pct_within_1 = sum([1 if abs(predictions[s]-labels[s])<1 else 0 for s in range(len(predictions))])/len(predictions)
         print("Average error: "+ str(avg_err))
         print("Percent within 1: "+ str(pct_within_1))
     end = time.time()
@@ -77,8 +76,8 @@ def train_keras():
     preds = test_labels_scaler.inverse_transform(preds_normal)
     end = time.time()
     print("Testing done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
-    avg_err = np.sum([abs(preds[s]-test_labels[s]) for s in range(len(preds))], axis=0)/len(preds)
-    pct_within_1 = np.sum([[1 if abs(preds[s][j]-test_labels[s][j])<1 else 0 for j in range(2)] for s in range(len(preds))], axis=0)/len(predictions)
+    avg_err = sum([abs(preds[s]-test_labels[s]) for s in range(len(preds))])/len(preds)
+    pct_within_1 = sum([1 if abs(preds[s]-test_labels[s])<1 else 0 for s in range(len(preds))])/len(preds)
     print("Average error: "+ str(avg_err))
     print("Percent within 1: "+ str(pct_within_1))
 
