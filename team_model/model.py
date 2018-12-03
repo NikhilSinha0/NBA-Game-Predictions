@@ -21,13 +21,16 @@ def train_keras():
     # model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
     collection = loader.get_games_collection()
     names = loader.get_distinct_train_names(collection)
-    num_batches = (len(names)//10)+1
+    # num_batches = (len(names)//10)+1
+    num_batches = (len(names)) +1
+
     data_size = get_data_size(collection)
     minibatches = []
     print("Getting data")
     start = time.time()
     for num in range(num_batches):
-        minibatch = names[10*num:10*(num+1)]
+        # minibatch = names[10*num:10*(num+1)]
+        minibatch = names[num]
         print('Getting data for players: '+str(minibatch))
         indices, data, labels = get_batch(collection, minibatch)
         minibatches.append((minibatch, indices, data, labels))
@@ -35,7 +38,8 @@ def train_keras():
     print("Data gathering done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
     in1 = tf.keras.layers.Input(shape = (1,))
     in2 = tf.keras.layers.Input(shape = (5, data_size,))
-    embed = tf.keras.layers.Embedding(10000, 64, input_length=1)(in1)
+    # embed = tf.keras.layers.Embedding(10000, 64, input_length=1)(in1)
+    embed = tf.keras.layers.Embedding(100, 64, input_length=1)(in1)
     flat_embed = tf.keras.layers.Reshape((64,))(embed)
     shaped = tf.keras.layers.RepeatVector(5)(flat_embed)
     concat = tf.keras.layers.Concatenate(axis=2)([shaped, in2])
