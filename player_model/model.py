@@ -80,6 +80,9 @@ def train_keras():
     pct_within_1 = sum([1 if abs(preds[s]-test_labels[s])<1 else 0 for s in range(len(preds))])/len(preds)
     print("Average error: "+ str(avg_err))
     print("Percent within 1: "+ str(pct_within_1))
+    model_json = model.to_json()
+    with open("../player_model.json", "w") as json_file:
+        json_file.write(model_json)
 
 if __name__ == '__main__':
     main()

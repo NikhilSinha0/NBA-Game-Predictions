@@ -95,7 +95,7 @@ def get_test(collection):
         team = get_team_test(collection, name)
         if(len(team)==0):
             print("")
-        truncated_data = [get_game_array_from_json(p) for p in team]
+        truncated_data = [get_game_array_from_json(p, name) for p in team]
         truncated_data = minmax_scale(truncated_data)
         indices.extend([phash]*len(team))
         team_data = []

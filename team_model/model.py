@@ -44,7 +44,7 @@ def train_keras():
     dense = tf.keras.layers.Dense(16, activation='relu')(lstm)
     out = tf.keras.layers.Dense(2, activation='sigmoid')(dense)
     model = tf.keras.Model(inputs=[in1, in2], outputs=[out])
-    opt = tf.keras.optimizers.Adam(lr=0.01)
+    opt = tf.keras.optimizers.Adam(lr=0.001)
     model.compile(loss='mean_absolute_error', optimizer=opt)
     print(model.summary())
     current_batch = 0
@@ -81,6 +81,9 @@ def train_keras():
     pct_within_1 = np.sum([[1 if abs(preds[s][j]-test_labels[s][j])<1 else 0 for j in range(2)] for s in range(len(preds))], axis=0)/len(predictions)
     print("Average error: "+ str(avg_err))
     print("Percent within 1: "+ str(pct_within_1))
+    model_json = model.to_json()
+    with open("../team_model.json", "w") as json_file:
+        json_file.write(model_json)
 
 if __name__ == '__main__':
     main()
