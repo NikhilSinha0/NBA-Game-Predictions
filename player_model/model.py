@@ -44,7 +44,7 @@ def train_keras():
     out = tf.keras.layers.Dense(1, activation='sigmoid')(dense)
     model = tf.keras.Model(inputs=[in1, in2], outputs=[out])
     opt = tf.keras.optimizers.Adam(lr=0.01)
-    model.compile(loss='mean_absolute_error', optimizer=opt)
+    model.compile(loss='mean_squared_logarithmic_error', optimizer=opt)
     print(model.summary())
     current_batch = 0
     print("Training started")
@@ -61,9 +61,9 @@ def train_keras():
         print(predictions[0:10])
         print(labels[0:10])
         avg_err = sum([abs(predictions[s]-labels[s]) for s in range(len(predictions))])/len(predictions)
-        pct_within_1 = sum([1 if abs(predictions[s]-labels[s])<1 else 0 for s in range(len(predictions))])/len(predictions)
+        pct_within_2 = sum([1 if abs(predictions[s]-labels[s])<2 else 0 for s in range(len(predictions))])/len(predictions)
         print("Average error: "+ str(avg_err))
-        print("Percent within 1: "+ str(pct_within_1))
+        print("Percent within 2: "+ str(pct_within_2))
     end = time.time()
     print("Training done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
     # make predictions
@@ -77,12 +77,13 @@ def train_keras():
     end = time.time()
     print("Testing done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
     avg_err = sum([abs(preds[s]-test_labels[s]) for s in range(len(preds))])/len(preds)
-    pct_within_1 = sum([1 if abs(preds[s]-test_labels[s])<1 else 0 for s in range(len(preds))])/len(preds)
+    pct_within_2 = sum([1 if abs(preds[s]-test_labels[s])<2 else 0 for s in range(len(preds))])/len(preds)
     print("Average error: "+ str(avg_err))
-    print("Percent within 1: "+ str(pct_within_1))
+    print("Percent within 2: "+ str(pct_within_2))
     model_json = model.to_json()
     with open("../player_model.json", "w") as json_file:
         json_file.write(model_json)
+    model.save_weights("../player_model.h5")
 
 if __name__ == '__main__':
     main()

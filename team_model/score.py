@@ -70,7 +70,7 @@ def get_batch(collection, name):
     # print(truncated_data)
     # print('\n')
 
-    truncated_data = minmax_scale(truncated_data)
+    #truncated_data = minmax_scale(truncated_data)
 
     indices.extend([phash]*len(team))
     team_data = []
@@ -96,7 +96,7 @@ def get_test(collection):
         if(len(team)==0):
             print("")
         truncated_data = [get_game_array_from_json(p, name) for p in team]
-        truncated_data = minmax_scale(truncated_data)
+        #truncated_data = minmax_scale(truncated_data)
         indices.extend([phash]*len(team))
         team_data = []
         for k in range(len(truncated_data)):

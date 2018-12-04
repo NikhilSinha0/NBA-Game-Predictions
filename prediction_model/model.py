@@ -4,82 +4,79 @@ import time
 from datetime import timedelta
 from sklearn.preprocessing import MinMaxScaler
 import sys
-sys.path.append('..') #unfortun0ately I can't find a better way to get stuff from sibling folders
-from score import get_batch, get_test, get_data_size
+sys.path.append('..') #unfortunately I can't find a better way to get stuff from sibling folders
+from score import get_batch, get_test, get_models, build_test_sets, build_train_sets
 
 import data_loader.loader as loader
 
 def main():
-    train_keras()
+    team_model, player_model = get_models()
+    train_keras(team_model, player_model)
 
-def train_keras():
-    # create and fit the LSTM network
-    # model = tf.keras.models.Sequential()
-    # model.add(tf.keras.layers.Embedding(10000, 64))
-    # model.add(tf.keras.layers.concatenate())
-    # model.add(tf.keras.layers.LSTM(5, input_shape=(1, 5)))
-    # model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
-    collection = loader.get_games_collection()
-    names = loader.get_distinct_train_names(collection)
-    num_batches = (len(names)//10)+1
-    data_size = get_data_size(collection)
+def train_keras(team_model, player_model):
+    teams = loader.get_games_collection()
+    players = loader.get_players_collection()
+    names = loader.get_distinct_team_train_names(teams)
+    num_batches = len(names)
     minibatches = []
     print("Getting data")
     start = time.time()
+    player_set, team_set = build_train_sets(players, teams)
     for num in range(num_batches):
-        minibatch = names[10*num:10*(num+1)]
-        print('Getting data for players: '+str(minibatch))
-        indices, data, labels = get_batch(collection, minibatch)
-        minibatches.append((minibatch, indices, data, labels))
+        minibatch = names[num]
+        print('Getting data for team: '+str(minibatch))
+        data, labels = get_batch(teams, player_set, team_set, player_model, team_model, names[num])
+        minibatches.append((minibatch, data, labels))
     end = time.time()
     print("Data gathering done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
-    in1 = tf.keras.layers.Input(shape = (1,))
-    in2 = tf.keras.layers.Input(shape = (5, data_size,))
-    embed = tf.keras.layers.Embedding(10000, 64, input_length=1)(in1)
-    flat_embed = tf.keras.layers.Reshape((64,))(embed)
-    shaped = tf.keras.layers.RepeatVector(5)(flat_embed)
-    concat = tf.keras.layers.Concatenate(axis=2)([shaped, in2])
-    lstm = tf.keras.layers.LSTM(64)(concat)
-    dense = tf.keras.layers.Dense(16, activation='relu')(lstm)
-    out = tf.keras.layers.Dense(2, activation='sigmoid')(dense)
-    model = tf.keras.Model(inputs=[in1, in2], outputs=[out])
+    in1 = tf.keras.layers.Input(shape = (2,))
+    in2 = tf.keras.layers.Input(shape = (15,1,))
+    in3 = tf.keras.layers.Input(shape = (2,))
+    in4 = tf.keras.layers.Input(shape = (15,1,))
+    flattenh = tf.keras.layers.Flatten()(in2)
+    flattena = tf.keras.layers.Flatten()(in4)
+    playerh = tf.keras.layers.Dense(64, activation='relu')(flattenh)
+    playera = tf.keras.layers.Dense(64, activation='relu')(flattena)
+    concath = tf.keras.layers.Concatenate()([in1, playerh])
+    concata = tf.keras.layers.Concatenate()([in3, playera])
+    teamh = tf.keras.layers.Dense(32, activation='relu')(concath)
+    teama = tf.keras.layers.Dense(32, activation='relu')(concata)
+    concat = tf.keras.layers.Concatenate()([teamh, teama])
+    dense = tf.keras.layers.Dense(16, activation='relu')(concat)
+    out = tf.keras.layers.Dense(1, activation='sigmoid')(dense)
+    model = tf.keras.Model(inputs=[in1, in2, in3, in4], outputs=[out])
     opt = tf.keras.optimizers.Adam(lr=0.01)
-    model.compile(loss='mean_absolute_error', optimizer=opt)
+    model.compile(loss='mean_squared_error', optimizer=opt)
     print(model.summary())
     current_batch = 0
     print("Training started")
     start = time.time()
     for i in range(num_batches*300):
-        minibatch, indices, data, labels = minibatches[current_batch]
+        minibatch, data, labels = minibatches[current_batch]
         print('Running batch with players: '+str(minibatch))
-        labels_scaler = MinMaxScaler(feature_range=(0, 1))
-        labels_normalized = labels_scaler.fit_transform(labels)
-        model.train_on_batch([indices, data], labels_normalized)
+        model.train_on_batch([data[0], data[1], data[2], data[3]], labels)
         current_batch = (current_batch + 1)%num_batches
-        predictions_normal = model.predict([indices, data])
-        predictions = labels_scaler.inverse_transform(predictions_normal)
+        predictions = model.predict([data])
         print(predictions[0:10])
         print(labels[0:10])
-        avg_err = sum([abs(predictions[s]-labels[s]) for s in range(len(predictions))])/len(predictions)
-        pct_within_1 = sum([1 if abs(predictions[s]-labels[s])<1 else 0 for s in range(len(predictions))])/len(predictions)
-        print("Average error: "+ str(avg_err))
-        print("Percent within 1: "+ str(pct_within_1))
+        pct = sum([abs(int(round(predictions[s]))-labels[s]) for s in range(len(predictions))])/len(predictions)
+        print("Accuracy: "+ str(pct))
     end = time.time()
     print("Training done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
     # make predictions
     print("Testing started")
     start = time.time()
-    test_ind, test_data, test_labels = get_test(collection)
-    test_labels_scaler = MinMaxScaler(feature_range=(0, 1))
-    test_labels_normalized = test_labels_scaler.fit_transform(labels)
-    preds_normal = model.predict([test_ind, test_data])
-    preds = test_labels_scaler.inverse_transform(preds_normal)
+    player_set, team_set = build_test_sets(players, teams)
+    test_data, test_labels = get_test(teams, player_set, team_set, player_model, team_model)
+    preds = model.predict([test_data[0], test_data[1], test_data[2], test_data[3]])
     end = time.time()
     print("Testing done. Time elapsed: " + str(timedelta(seconds = int(end - start))))
-    avg_err = sum([abs(preds[s]-test_labels[s]) for s in range(len(preds))])/len(preds)
-    pct_within_1 = sum([1 if abs(preds[s]-test_labels[s])<1 else 0 for s in range(len(preds))])/len(preds)
-    print("Average error: "+ str(avg_err))
-    print("Percent within 1: "+ str(pct_within_1))
+    pct = sum([abs(int(round(preds[s]))-test_labels[s]) for s in range(len(preds))])/len(preds)
+    print("Accuracy: "+ str(pct))
+    model_json = model.to_json()
+    with open("../prediction_model.json", "w") as json_file:
+        json_file.write(model_json)
+    model.save_weights("../prediction_model.h5")
 
 if __name__ == '__main__':
     main()

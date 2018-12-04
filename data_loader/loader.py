@@ -174,6 +174,23 @@ def get_team_batch(collection, team_name):
     ).sort([("Date", pymongo.ASCENDING)])
     return list(recs)
 
+def get_team_home_batch(collection, team_name):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$lt": "2017/10/16"
+                }
+            },
+            {
+                "Home.Name": {
+                    "$eq": team_name
+                }
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
+
 def get_partial_test(collection, pname):
     recs = collection.find(
         {"$and":[
@@ -208,6 +225,23 @@ def get_team_test(collection, team_name):
                     {"Away.Name": team_name},
                     {"Home.Name": team_name}
                 ]
+            }
+        ]}
+    ).sort([("Date", pymongo.ASCENDING)])
+    return list(recs)
+
+def get_team_home_test(collection, team_name):
+    recs = collection.find(
+        {"$and":[
+            {
+                "Date": {
+                    "$gt": "2017/10/16"
+                }
+            },
+            {
+                "Home.Name": {
+                    "$eq": team_name
+                }
             }
         ]}
     ).sort([("Date", pymongo.ASCENDING)])

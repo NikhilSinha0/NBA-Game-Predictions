@@ -30,7 +30,7 @@ def get_batch(collection, pnames):
         if(len(player)==0):
             continue
         truncated_data = [[x if x!=None else 0 for x in list(p.values())[3:]] for p in player]
-        truncated_data = minmax_scale(truncated_data)
+        #truncated_data = minmax_scale(truncated_data)
         indices.extend([phash]*len(player))
         player_data = []
         for k in range(len(truncated_data)):
@@ -56,7 +56,7 @@ def get_test(collection):
         if(len(player)==0):
             continue
         truncated_data = [[x if x!=None else 0 for x in list(p.values())[3:]] for p in player]
-        truncated_data = minmax_scale(truncated_data)
+        #truncated_data = minmax_scale(truncated_data)
         indices.extend([phash]*len(player))
         player_data = []
         for k in range(len(truncated_data)):
